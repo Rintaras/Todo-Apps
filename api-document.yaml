@@ -1,0 +1,162 @@
+openapi: 3.0.3
+info:
+  title: Todo App API
+  description: |
+    学習用の Todo API 契約（ドラフト）。Go でレイヤード構成を組む際の参照用です。
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:8080/api
+    description: ローカル（Go 実装想定）
+
+tags:
+  - name: todos
+    description: タスクの CRUD
+
+paths:
+  /todos:
+    get:
+      tags: [todos]
+      summary: 一覧取得
+      operationId: listTodos
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [todos]
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Todo"
+    post:
+      tags: [todos]
+      summary: 新規作成
+      operationId: createTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TodoCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /todos/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags: [todos]
+      summary: 1件取得
+      operationId: getTodo
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      tags: [todos]
+      summary: 更新（部分更新）
+      operationId: updateTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TodoUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: [todos]
+      summary: 削除
+      operationId: deleteTodo
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Todo:
+      type: object
+      required: [id, title, completed]
+      properties:
+        id:
+          type: string
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        title:
+          type: string
+          maxLength: 500
+        completed:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TodoCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          maxLength: 500
+
+    TodoUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 500
+        completed:
+          type: boolean
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string

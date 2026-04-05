@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo アプリ</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <h1 class="header__title">Todo</h1>
+        <p class="header__lead">
+          API は未実装でも UI を確認できます。接続先は
+          <code>js/config.js</code> の <code>apiBaseUrl</code> を編集してください。
+        </p>
+      </header>
+
+      <main class="main">
+        <section class="panel panel--form" aria-labelledby="form-heading">
+          <h2 id="form-heading" class="panel__title">新しいタスク</h2>
+          <form id="todo-form" class="todo-form" autocomplete="off">
+            <label class="sr-only" for="todo-title">タイトル</label>
+            <input
+              id="todo-title"
+              name="title"
+              type="text"
+              class="todo-form__input"
+              placeholder="タスクのタイトルを入力…"
+              maxlength="500"
+              required
+            />
+            <button type="submit" class="btn btn--primary">追加</button>
+          </form>
+        </section>
+
+        <section class="panel" aria-labelledby="list-heading">
+          <div class="panel__head">
+            <h2 id="list-heading" class="panel__title">一覧</h2>
+            <div class="filters" role="group" aria-label="表示フィルター">
+              <button type="button" class="filter-btn is-active" data-filter="all">すべて</button>
+              <button type="button" class="filter-btn" data-filter="active">未完了</button>
+              <button type="button" class="filter-btn" data-filter="completed">完了</button>
+            </div>
+          </div>
+
+          <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
+
+          <ul id="todo-list" class="todo-list"></ul>
+
+          <template id="todo-item-template">
+            <li class="todo-item" data-id="">
+              <label class="todo-item__check-wrap">
+                <input type="checkbox" class="todo-item__check" aria-label="完了にする" />
+                <span class="todo-item__title"></span>
+              </label>
+              <button type="button" class="btn btn--ghost btn--small todo-item__delete" aria-label="削除">
+                削除
+              </button>
+            </li>
+          </template>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>
+          OpenAPI は <code>api-document.yaml</code>、Swagger UI は Docker Compose の
+          <code>swagger-ui</code>（例: <code>http://localhost:8081</code>）で確認できます。
+        </p>
+      </footer>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>
