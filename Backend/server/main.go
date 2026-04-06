@@ -9,7 +9,7 @@ import (
 
 
 func testHandler(c *gin.Context) {
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 			"message": "ok",
 		})
 		// if err := c.ShouldBindJSON($req) != nil
