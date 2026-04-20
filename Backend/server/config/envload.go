@@ -7,8 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// LoadDotEnv はカレントディレクトリから親へ辿って最初に見つかった .env を読み込みます。
-// `go run ./server` を Backend から、バイナリをルートから実行するどちらでも拾えるようにするためのものです。
 func LoadDotEnv() (loadedPath string) {
 	dir, err := os.Getwd()
 	if err != nil {

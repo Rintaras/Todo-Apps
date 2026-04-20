@@ -1,44 +1,43 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
 
-	"github.com/gin-gonic/gin"
+	"todo-apps/backend/server/Config"
+	"todo-apps/backend/server/Models"
+	"todo-apps/backend/server/Routes"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-
-func testHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-			"message": "ok",
-		})
-		// if err := c.ShouldBindJSON($req) != nil
-		// c.JSON(http.statusBadRequest, gin.H{"error" : "invalid request"})
-}
-
-func loginHandler(c *gin.Context) {
-	var req Auth
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error" : "invalid request"})
-		return
-	}
-	fmt.Println("Username", req.Username)
-	fmt.Println("Password", req.Password)
-	
-	c.JSON(http.StatusOK, gin.H{
-	"message":"login success!",
-	"Username":req.Username,
-})
-}
-
-type Auth struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 func main() {
-	router := gin.Default()
-	router.GET("/test", testHandler)
-	router.POST("/login", loginHandler)
-	router.Run()
+	if p := Config.LoadDotEnv(); p != "" {
+		log.Printf("db: 読み込んだ .env: %s", p)
+	}
+
+	cfg, err := Config.BuildDBConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := gorm.Open("mysql", Config.DbURL(cfg))
+	if err != nil {
+		log.Fatalf("db: 接続に失敗しました（MySQL が起動しているか、ホスト・ポート・認証が合っているか確認）: %v", err)
+	}
+	Config.DB = db
+	defer func() {
+		if err := Config.DB.Close(); err != nil {
+			log.Printf("db: Close: %v", err)
+		}
+	}()
+
+	if err := Config.DB.AutoMigrate(&Models.Todo{}).Error; err != nil {
+		log.Fatalf("db: AutoMigrate: %v", err)
+	}
+
+	r := Routes.SetupRouter()
+	if err := r.Run(); err != nil {
+		log.Fatal(err)
+	}
 }

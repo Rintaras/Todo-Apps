@@ -36,6 +36,7 @@ cd Backend && go build ./...
 - API ベース URL: `Frontend/js/config.js` の `apiBaseUrl`（既定は `/api`）
 - `api.js` は OpenAPI のパス（`/todos` など）に合わせた `fetch` ラッパーです。
 - API が未接続のときはデモ用データで UI だけ動作確認できます。
+- GitHub の **Languages** バーでは、テンプレート扱いとして `.gitattributes` で `Frontend/**` を `linguist-vendored` にし、割合が **Go 側に寄る**ようにしている（反映は push 後）。
 
 ### 静的ファイルの確認
 

@@ -1,2 +1,2 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# 学習の主対象は Go。静的フロントはテンプレートのため言語統計から外し、バー表示をバックエンド中心にする。
+Frontend/** linguist-vendored
